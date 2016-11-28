@@ -1,0 +1,29 @@
+{
+  "name": "flux-todomvc",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/majunbao/flux-todomvc.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/majunbao/flux-todomvc/issues"
+  },
+  "homepage": "https://github.com/majunbao/flux-todomvc#readme",
+  "dependencies": {
+    "react": "^15.4.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-preset-react": "^6.16.0",
+    "webpack": "^2.1.0-beta.27"
+  }
+}
