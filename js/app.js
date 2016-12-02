@@ -41,7 +41,11 @@ function Avatar(props) {
 
 function tick(){
   ReactDOM.render(
-    <Clock />,
+    <div>
+      <Clock />,
+      <Clock />,
+      <Clock />
+    </div>,
     document.getElementById('todoapp')
   );
 }
@@ -81,10 +85,13 @@ class Clock extends React.Component {
   }
 }
 
-ReactDOM.render(
-  <Clock />,
-  document.getElementById('todoapp')
-);
+// ReactDOM.render(
+//   <div>
+//     <Clock />
+//     <Clock />
+//   </div>,
+//   document.getElementById('todoapp')
+// );
 
 // setInterval(tick, 1000);
 
@@ -96,3 +103,151 @@ var user = {
 //   <Comment date="2222" author={user} />,
 //   document.getElementById('todoapp')
 // );
+
+
+function ActionLink() {
+  function handleClick(e) {
+    e.preventDefault();
+    console.log('The link was clicked.');
+  }
+
+  return (
+    <a href="#" onClick={handleClick}>Click me</a>
+  )
+}
+
+class LoggingButton extends React.Component {
+  handleClick = () => {
+    console.log('this is :', this);
+  }
+
+  render() {
+    return (
+      <button onCLick={this.handleClick}>
+        Click me
+      </button>
+    )
+  }
+}
+
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+  }
+
+  handleClick = () => {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+
+function UserGreeting(props) {
+  return <h1>Welcome back!</h1>;
+}
+
+function GuestGreeting(props) {
+  return <h1>Please sign up.</h1>;
+}
+
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+
+function LoginButton(props) {
+  return (
+    <button onClick={props.onClick}>
+    Login
+    </button>
+  );
+}
+
+function LogoutButton(props) {
+  return (
+    <button onClick={props.onClick}>
+      Logout
+    </button>
+  );
+}
+
+class LoginControl extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isLoggedIn: false};
+  }
+
+  handleLoginClick = () => {
+    this.setState({isLoggedIn: true});
+  }
+
+  handleLogoutClick = () => {
+    this.setState({isLoggedIn: false});
+  }
+
+  render() {
+    const isLoggedIn = this.state.isLoggedIn;
+
+    let button = null;
+    if (isLoggedIn) {
+      button = <LogoutButton onClick={this.handleLogoutClick} />;
+    } else {
+      button = <LoginButton onClick={this.handleLoginClick} />;
+    }
+
+    return (
+      <div>
+        <Greeting isLoggedIn={isLoggedIn} />
+        {button}
+      </div>
+    )
+  }
+}
+
+function Mailbox(props) {
+  const unreadMessage = props.unreadMessage;
+  return (
+    <div>
+      <h1>Hello!</h1>
+      {unreadMessage.length > 0 &&
+        <h2>
+          You have {unreadMessage.length} unread message.
+        </h2>
+      }
+    </div>
+  )
+}
+const message = ['React', 'Re: React', 'Re:Re'];
+
+const numbers = [1, 2, 3, 4, 5, 6];
+const listItems = numbers.map((number) => 
+  <li>{number}</li>
+);
+
+function Numberlist(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map((number) => 
+    <li>{number}</li>
+  );
+
+  return (
+    <ul>{listItems}</ul>
+  );
+}
+
+ReactDOM.render(
+  <Numberlist numbers={numbers} />,
+  document.getElementById('todoapp')
+)
