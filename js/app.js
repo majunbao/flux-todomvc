@@ -247,7 +247,75 @@ function Numberlist(props) {
   );
 }
 
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+  }
+
+  handleChange = (e) => {
+    this.setState({value: e.target.value.toUpperCase()});
+  }
+
+  handleSubmit = (e) => {
+    alert('A name was submitted: ' + this.state.value);
+    e.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <lable>
+          Name:
+            <textarea type="text" value={this.state.value} onChange={this.handleChange} />
+        </lable>
+        <input type="submit" value="Submit" />
+      </form>
+    )
+  }
+}
+
+class SelectForm extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {value: 'coconut'};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(e) {
+    this.setState({value: e.target.value});
+  }
+
+  handleSubmit(e) {
+    alert('you:' + this.state.value);
+    e.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Pick your favorite La Croix flavor:
+          <select value={this.state.value} onChange={this.handleChange}>
+            <option value="grapefruit">Grepefruit</option>
+            <option value="coconut">coconut</option>
+          </select>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+
+function BoilingVerdict(props) {
+  if (props.celsius >= 100) {
+    return <p>The water would boil.</p>;
+  }
+  return <p>The water would not boil.</p>;
+}
+
 ReactDOM.render(
-  <Numberlist numbers={numbers} />,
+  <BoilingVerdict />,
   document.getElementById('todoapp')
 )
