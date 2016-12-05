@@ -1,321 +1,87 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Dispatcher} from 'flux';
+import {EventEmitter} from 'events';
+import assign from 'object-assign';
 
+// let TimeStore = {
+//   graph: ['三角形', '正方形', '多边形']
+// }
 
+let AppDispatcher = new Dispatcher();
 
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
+let TodoActions = {
+  create: function(text){
+    AppDispatcher.dispatch({
+      actionType: 'create',
+      text: text
+    })
+  }
 }
 
-function App() {
-  return (
-    <div>
-      <Welcome name="Sara"></Welcome>
-      <Welcome name="Cahal"></Welcome>
-      <Welcome name="Edite"></Welcome>
-    </div>
-  )
-}
-const element = <Welcome name="Sara" />;
+let _graph = []
+let TimeStore = assign({}, EventEmitter.prototype, {
+  graph : _graph
+})
 
-function Comment(props) {
-  return (
-    <div className="Comment">
-      <Avatar user={props.author} />
-      <div className="Comment-date">
-        {props.date}
-      </div>
-    </div>
-  );
-}
-
-function Avatar(props) {
-  return (
-    <img className="Avatar"
-      src={props.user.avataUrl}
-      alt={props.user.name}
-    />
-  )
+function create(text){
+  _graph.push(text);
 }
 
 
-function tick(){
-  ReactDOM.render(
-    <div>
-      <Clock />,
-      <Clock />,
-      <Clock />
-    </div>,
-    document.getElementById('todoapp')
-  );
-}
+AppDispatcher.register(function(action){
+  create(action.text);
+  TimeStore.emit('abc');
+});
 
+// setTimeout(function(){
+//   TimeStore.emit('abc');
+//   AppDispatcher.dispatch({
+//     actionType: "nihao"
+//   })
+// }, 1500)
 
-
-class Clock extends React.Component {
-  constructor(props) {
+class Time extends React.Component {
+  constructor (props){
     super(props);
-    this.state = {date: new Date()};
+    this.state = {
+      graph: TimeStore.graph,
+      value: ''
+    } 
   }
 
-  componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      1000
-    )
+  componentDidMount = () => {
+    TimeStore.on('abc', () => {
+      this.setState({graph:TimeStore.graph})
+    })
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timerID);
+  _onCreate = () => {
+    TodoActions.create(this.state.value)
   }
 
-  tick() {
+  _onChange = (e) => {
     this.setState({
-      date: new Date()
+      value: e.target.value
     })
   }
 
   render() {
-    return (
-      <div>
-        <h1>Hello, world!</h1>
-        <h2>It is {this.state.date.toLocaleTimeString()}.</h2>
-      </div>
-    );
-  }
-}
 
-// ReactDOM.render(
-//   <div>
-//     <Clock />
-//     <Clock />
-//   </div>,
-//   document.getElementById('todoapp')
-// );
-
-// setInterval(tick, 1000);
-
-var user = {
-  avataUrl:"2",
-  name:"2"
-}
-// ReactDOM.render(
-//   <Comment date="2222" author={user} />,
-//   document.getElementById('todoapp')
-// );
-
-
-function ActionLink() {
-  function handleClick(e) {
-    e.preventDefault();
-    console.log('The link was clicked.');
-  }
-
-  return (
-    <a href="#" onClick={handleClick}>Click me</a>
-  )
-}
-
-class LoggingButton extends React.Component {
-  handleClick = () => {
-    console.log('this is :', this);
-  }
-
-  render() {
-    return (
-      <button onCLick={this.handleClick}>
-        Click me
-      </button>
-    )
-  }
-}
-
-class Toggle extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {isToggleOn: true};
-  }
-
-  handleClick = () => {
-    this.setState(prevState => ({
-      isToggleOn: !prevState.isToggleOn
-    }));
-  }
-
-  render() {
-    return (
-      <button onClick={this.handleClick}>
-        {this.state.isToggleOn ? 'ON' : 'OFF'}
-      </button>
-    );
-  }
-}
-
-function UserGreeting(props) {
-  return <h1>Welcome back!</h1>;
-}
-
-function GuestGreeting(props) {
-  return <h1>Please sign up.</h1>;
-}
-
-function Greeting(props) {
-  const isLoggedIn = props.isLoggedIn;
-  if (isLoggedIn) {
-    return <UserGreeting />;
-  }
-  return <GuestGreeting />;
-}
-
-function LoginButton(props) {
-  return (
-    <button onClick={props.onClick}>
-    Login
-    </button>
-  );
-}
-
-function LogoutButton(props) {
-  return (
-    <button onClick={props.onClick}>
-      Logout
-    </button>
-  );
-}
-
-class LoginControl extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {isLoggedIn: false};
-  }
-
-  handleLoginClick = () => {
-    this.setState({isLoggedIn: true});
-  }
-
-  handleLogoutClick = () => {
-    this.setState({isLoggedIn: false});
-  }
-
-  render() {
-    const isLoggedIn = this.state.isLoggedIn;
-
-    let button = null;
-    if (isLoggedIn) {
-      button = <LogoutButton onClick={this.handleLogoutClick} />;
-    } else {
-      button = <LoginButton onClick={this.handleLoginClick} />;
-    }
+    let g = this.state.graph.map((graph, index) => <li key={index}>{graph}</li>)
 
     return (
       <div>
-        <Greeting isLoggedIn={isLoggedIn} />
-        {button}
+        <input onChange={this._onChange} />
+        <button onClick={this._onCreate}>add</button>
+        <ul>{g}</ul>
       </div>
     )
+
   }
-}
-
-function Mailbox(props) {
-  const unreadMessage = props.unreadMessage;
-  return (
-    <div>
-      <h1>Hello!</h1>
-      {unreadMessage.length > 0 &&
-        <h2>
-          You have {unreadMessage.length} unread message.
-        </h2>
-      }
-    </div>
-  )
-}
-const message = ['React', 'Re: React', 'Re:Re'];
-
-const numbers = [1, 2, 3, 4, 5, 6];
-const listItems = numbers.map((number) => 
-  <li>{number}</li>
-);
-
-function Numberlist(props) {
-  const numbers = props.numbers;
-  const listItems = numbers.map((number) => 
-    <li>{number}</li>
-  );
-
-  return (
-    <ul>{listItems}</ul>
-  );
-}
-
-class NameForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {value: ''};
-  }
-
-  handleChange = (e) => {
-    this.setState({value: e.target.value.toUpperCase()});
-  }
-
-  handleSubmit = (e) => {
-    alert('A name was submitted: ' + this.state.value);
-    e.preventDefault();
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <lable>
-          Name:
-            <textarea type="text" value={this.state.value} onChange={this.handleChange} />
-        </lable>
-        <input type="submit" value="Submit" />
-      </form>
-    )
-  }
-}
-
-class SelectForm extends React.Component {
-  constructor(props) {
-    super();
-    this.state = {value: 'coconut'};
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(e) {
-    this.setState({value: e.target.value});
-  }
-
-  handleSubmit(e) {
-    alert('you:' + this.state.value);
-    e.preventDefault();
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Pick your favorite La Croix flavor:
-          <select value={this.state.value} onChange={this.handleChange}>
-            <option value="grapefruit">Grepefruit</option>
-            <option value="coconut">coconut</option>
-          </select>
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-    );
-  }
-}
-
-function BoilingVerdict(props) {
-  if (props.celsius >= 100) {
-    return <p>The water would boil.</p>;
-  }
-  return <p>The water would not boil.</p>;
 }
 
 ReactDOM.render(
-  <BoilingVerdict />,
+  <Time />,
   document.getElementById('todoapp')
 )
