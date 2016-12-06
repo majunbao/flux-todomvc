@@ -3,10 +3,12 @@ import {EventEmitter} from 'events';
 import assign from 'object-assign';
 
 
-let _todos = ['ni'];
+let _todos = [];
 
 function create(text){
-  _todos.push(text);
+  if(text){
+   _todos.push(text);
+  }
 }
 
 let TimeStore = assign({}, EventEmitter.prototype, {
@@ -20,7 +22,7 @@ AppDispatcher.register(function(action){
   switch(action.actionType){
     case 'create':
       let text = action.text;
-      console.log(action);
+      create(text);
       TimeStore.emit('change');
       break;
     default:

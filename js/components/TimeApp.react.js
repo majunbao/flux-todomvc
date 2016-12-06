@@ -2,9 +2,22 @@ import React from 'react';
 import TimeStore from '../stores/TimeStore';
 import TodoActions from '../actions/TimeActions';
 
+function Items(props){
+  let listItems = props.allItem.map((item, i) =>
+    <li key={i}>{item} <a style={{color: 'red'}}>x</a></li>
+  );
+  return (
+    <ul>{listItems}</ul>
+  );
+}
+
 class TimeApp extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      value : this.props.value || '',
+      allItem: TimeStore.getAll()
+    }
   }
 
   componentDidMount() {
@@ -12,26 +25,32 @@ class TimeApp extends React.Component {
   }
 
   render(){
-    let items = TimeStore.getAll().map(function(item){
-      return <li>{item}</li>
-    });
-
     return (
       <div>
-        <input />
+        <input value={this.state.value} onChange={this._onChangeInput} />
         <button onClick={this._onCreate}>add</button>
-        <ul>{items}</ul>
+        <Items allItem={this.state.allItem} />
       </div>
     )
   }
 
   _onChange = () => {
-    this.setState(TimeStore.getAll());
+    this.setState({
+      allItem: TimeStore.getAll()
+    });
   }
 
   _onCreate = (e) => {
-    console.log(e.target)
-    TodoActions.create('qwe');
+    TodoActions.create(this.state.value);
+    this.setState({
+      value: ''
+    })
+  }
+
+  _onChangeInput = (e) => {
+    this.setState({
+      value: e.target.value
+    })
   }
 }
 
